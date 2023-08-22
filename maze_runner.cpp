@@ -9,7 +9,7 @@ int num_rows;
 int num_cols;
 
 // Representação de uma posição
-struct pos_t {
+struct pos_t { //A posição é representada por um vetor de posição contendo a coordenada linha(i) e coluna(j)
 	int i;
 	int j;
 };
@@ -17,6 +17,8 @@ struct pos_t {
 // Estrutura de dados contendo as próximas
 // posicões a serem exploradas no labirinto
 std::stack<pos_t> valid_positions;
+
+
 /* Inserir elemento: 
 
 	 pos_t pos;
@@ -39,22 +41,34 @@ std::stack<pos_t> valid_positions;
 pos_t load_maze(const char* file_name) {
 	pos_t initial_pos;
 	// Abre o arquivo para leitura (fopen)
+	FILE* inFile = fopen(file_name, "r");
 
-	// Le o numero de linhas e colunas (fscanf) 
-	// e salva em num_rows e num_cols
+	// Le o numero de linhas e colunas (fscanf) e salva em num_rows e num_cols
+	fscanf(inFile, "%d %d", &num_rows, &num_cols);
 
 	// Aloca a matriz maze (malloc)
-	for (int i = 0; i < num_rows; ++i)
-		// Aloca cada linha da matriz
+  	maze = new char*[num_rows];
+	// Aloca cada linha da matriz
+    for (int i = 0; i < num_rows; ++i) {
+        maze[i] = new char[num_cols];
+    }
 	
 	for (int i = 0; i < num_rows; ++i) {
 		for (int j = 0; j < num_cols; ++j) {
 			// Le o valor da linha i+1,j do arquivo e salva na posição maze[i][j]
+			fscanf(inFile, " %c", &maze[i][j]);
+
 			// Se o valor for 'e' salvar o valor em initial_pos
+			if (maze[i][j] == 'e') {
+                initial_pos.i = i;
+                initial_pos.j = j;
 		}
 	}
-	return initial_pos;
+	
 }
+	return initial_pos;
+
+
 
 // Função que imprime o labirinto
 void print_maze() {
