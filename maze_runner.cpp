@@ -86,10 +86,19 @@ void print_maze() {
 bool walk(pos_t pos) {
 	
 	// Repita até que a saída seja encontrada ou não existam mais posições não exploradas
+	while (!valid_positions.empty()) {
+    	pos_t current_position = valid_positions.top();
+        valid_positions.pop();
+
 		// Marcar a posição atual com o símbolo '.'
+		maze[current_position.i][current_position.j] = '.';
+
 		// Limpa a tela
+		system("cls");
+
 		// Imprime o labirinto
-		
+		print_maze();
+
 		/* Dado a posição atual, verifica quais sao as próximas posições válidas
 			Checar se as posições abaixo são validas (i>0, i<num_rows, j>0, j <num_cols)
 		 	e se são posições ainda não visitadas (ou seja, caracter 'x') e inserir
@@ -120,6 +129,10 @@ int main(int argc, char* argv[]) {
 	bool exit_found = walk(initial_pos);
 	
 	// Tratar o retorno (imprimir mensagem)
-	
+	 if (exit_found) {
+        printf("Saída encontrada!\n");
+    } else {
+        printf("Saída não encontrada.\n");
+    }
 	return 0;
 }
