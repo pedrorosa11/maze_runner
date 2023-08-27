@@ -18,14 +18,13 @@ struct pos_t { //A posição é representada por um vetor de posição contendo 
 // posicões a serem exploradas no labirinto
 std::stack<pos_t> valid_positions;
 
-
 /* Inserir elemento: 
 
 	 pos_t pos;
 	 pos.i = 1;
 	 pos.j = 3;
 	 valid_positions.push(pos)
- */
+ 
 // Retornar o numero de elementos: 
 //    valid_positions.size();
 // 
@@ -34,10 +33,9 @@ std::stack<pos_t> valid_positions;
 // 
 // Remover o primeiro elemento do vetor: 
 //    valid_positions.pop();
+*/
 
-
-// Função que le o labirinto de um arquivo texto, carrega em 
-// memória e retorna a posição inicial
+// (FEITO) Função que le o labirinto de um arquivo texto, carrega em memória e retorna a posição inicial
 pos_t load_maze(const char* file_name) {
 	pos_t initial_pos;
 	// Abre o arquivo para leitura (fopen)
@@ -84,7 +82,7 @@ void print_maze() {
 // Função responsável pela navegação.
 // Recebe como entrada a posição initial e retorna um booleando indicando se a saída foi encontrada
 bool walk(pos_t pos) {
-	
+
 	// Repita até que a saída seja encontrada ou não existam mais posições não exploradas
 	while (!valid_positions.empty()) {
     	pos_t current_position = valid_positions.top();
@@ -94,24 +92,48 @@ bool walk(pos_t pos) {
 		maze[current_position.i][current_position.j] = '.';
 
 		// Limpa a tela
-		system("cls");
+		system("clear");
 
 		// Imprime o labirinto
 		print_maze();
 
-		/* Dado a posição atual, verifica quais sao as próximas posições válidas
-			Checar se as posições abaixo são validas (i>0, i<num_rows, j>0, j <num_cols)
-		 	e se são posições ainda não visitadas (ou seja, caracter 'x') e inserir
-		 	cada uma delas no vetor valid_positions
-		 		- pos.i, pos.j+1
-		 		- pos.i, pos.j-1
-		 		- pos.i+1, pos.j
-		 		- pos.i-1, pos.j
-		 	Caso alguma das posiçÕes validas seja igual a 's', retornar verdadeiro
-	 	*/
-
+		// Verificar as posições vizinhas e inseri-las na pilha
 		
-	
+		pos_t new_position;
+
+		// Verificar a posição abaixo
+		new_position.i = current_position.i + 1;
+		new_position.j = current_position.j;
+		if (new_position.i >= 0 && new_position.i < num_rows && maze[new_position.i][new_position.j] == 'x') {
+			valid_positions.push(new_position);
+		}
+
+		// Verificar a posição acima
+		new_position.i = current_position.i - 1;
+		new_position.j = current_position.j;
+		if (new_position.i >= 0 && new_position.i < num_rows && maze[new_position.i][new_position.j] == 'x') {
+			valid_positions.push(new_position);
+		}
+
+		// Verificar a posição à direita
+		new_position.i = current_position.i;
+		new_position.j = current_position.j + 1;
+		if (new_position.j >= 0 && new_position.j < num_cols && maze[new_position.i][new_position.j] == 'x') {
+			valid_positions.push(new_position);
+		}
+
+		// Verificar a posição à esquerda
+		new_position.i = current_position.i;
+		new_position.j = current_position.j - 1;
+		if (new_position.j >= 0 && new_position.j < num_cols && maze[new_position.i][new_position.j] == 'x') {
+			valid_positions.push(new_position);
+		}
+
+		// Verificar se alguma das posições válidas é igual a 's'
+		if (maze[new_position.i][new_position.j] == 's') {
+    		return true; // Saída encontrada!
+		}
+
 		// Verifica se a pilha de posições nao esta vazia 
 		//Caso não esteja, pegar o primeiro valor de  valid_positions, remove-lo e chamar a funçao walk com esse valor
 		// Caso contrario, retornar falso
@@ -120,8 +142,8 @@ bool walk(pos_t pos) {
 			valid_positions.pop();
 		}
 	return false;
+	}
 }
-
 int main(int argc, char* argv[]) {
 	// carregar o labirinto com o nome do arquivo recebido como argumento
 	pos_t initial_pos = load_maze(argv[1]);
