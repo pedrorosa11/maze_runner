@@ -64,64 +64,56 @@ bool walk(pos_t pos) {
 
         pos_t new_position;
 
-        //Verificar abaixo
-        new_position.i = current_position.i + 1;
-        new_position.j = current_position.j;
-        if (new_position.i >= 0 && new_position.i < num_rows && new_position.j >= 0 && new_position.j < num_cols && maze[new_position.i][new_position.j] == 'x') {
-            if (maze[new_position.i][new_position.j] == 's') {
-                return true;
-            }
-            valid_positions.push(new_position);
-        }
+//Verificar abaixo
+new_position.i = current_position.i + 1;
+new_position.j = current_position.j;
+if (new_position.i >= 0 && new_position.i < num_rows && new_position.j >= 0 && new_position.j < num_cols && maze[new_position.i][new_position.j] == 'x') {
+    if (maze[new_position.i][new_position.j] == 's') {
+        return true;
+    }
+    valid_positions.push(new_position);
+}
 
-        // Implementar verificação para outras direções (acima, à direita, à esquerda)
-        //Verificar acima
-                new_position.i = current_position.i -1;
-                new_position.j = current_position.j;
-                if (new_position.i >= 0 && new_position.i < num_rows && new_position.j >= 0 && new_position.j < num_cols && maze[new_position.i][new_position.j] == 'x') {
-                    if (maze[new_position.i][new_position.j] == 's') {
-                        return true;
-                    }
-                    valid_positions.push(new_position);
-                }
-            //Verificar direita
-                new_position.i = current_position.i;
-                new_position.j = current_position.j + 1;
-                if (new_position.i >= 0 && new_position.i < num_rows && new_position.j >= 0 && new_position.j < num_cols && maze[new_position.i][new_position.j] == 'x') {
-                    if (maze[new_position.i][new_position.j] == 's') {
-                        return true;
-            }
-            valid_positions.push(new_position);
-        }
-            //Verificar esquerda
-                new_position.i = current_position.i;
-                new_position.j = current_position.j -1;
-                if (new_position.i >= 0 && new_position.i < num_rows && new_position.j >= 0 && new_position.j < num_cols && maze[new_position.i][new_position.j] == 'x') {
-                    if (maze[new_position.i][new_position.j] == 's') {
-                        return true;
-            }
-            valid_positions.push(new_position);
-        }
+// Verificar acima
+new_position.i = current_position.i - 1;
+new_position.j = current_position.j;
+if (new_position.i >= 0 && new_position.i < num_rows && new_position.j >= 0 && new_position.j < num_cols && maze[new_position.i][new_position.j] == 'x') {
+    if (maze[new_position.i][new_position.j] == 's') {
+        return true;
+    }
+    valid_positions.push(new_position);
+}
+
+// Verificar direita
+new_position.i = current_position.i;
+new_position.j = current_position.j + 1;
+if (new_position.i >= 0 && new_position.i < num_rows && new_position.j >= 0 && new_position.j < num_cols && maze[new_position.i][new_position.j] == 'x') {
+    if (maze[new_position.i][new_position.j] == 's') {
+        return true;
+    }
+    valid_positions.push(new_position);
+}
+
+// Verificar esquerda
+new_position.i = current_position.i;
+new_position.j = current_position.j - 1;
+if (new_position.i >= 0 && new_position.i < num_rows && new_position.j >= 0 && new_position.j < num_cols && maze[new_position.i][new_position.j] == 'x') {
+    if (maze[new_position.i][new_position.j] == 's') {
+        return true;
+    }
+    valid_positions.push(new_position);
+}
+
     }
 
     return false;
 }
 
 
-int main(/*int argc, char* argv[]*/) {
+int main() {
 
 
-
-/*
- int main(){
-    char file_name[100]; //espaço para armazenar o nome do arquivo.
-
-    printf("Digite o nome do arquivo do labirinto: ");
-    scanf("%s",file_name); //Lê o nome do arquivo do teclado
-
-    pos_t initial_pos = load_maze(file_name); 
-*/
-    pos_t initial_pos = load_maze("../data/maze.txt"/*argv[1]*/);   
+    pos_t initial_pos = load_maze("../data/maze5.txt");   
     bool exit_found = walk(initial_pos);
 
     if (exit_found) {
