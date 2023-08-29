@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stack>
 #include <cstdlib>  // Adicionado para usar a função system("clear")
+#include <thread>
 
 // Matriz de char representando o labirinto
 char** maze;
@@ -54,11 +55,20 @@ void print_maze() {
 bool walk(pos_t pos) {
     valid_positions.push(pos);
 
+    
+
     while (!valid_positions.empty()) {
         pos_t current_position = valid_positions.top();
         valid_positions.pop();
 
+    /*if (maze[pos.i][pos.j] == 's') {
+        return true;
+    }*/
+
         maze[current_position.i][current_position.j] = '.';
+
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+
         system("clear");
         print_maze();
 
@@ -78,12 +88,12 @@ if (new_position.i >= 0 && new_position.i < num_rows && new_position.j >= 0 && n
 new_position.i = current_position.i - 1;
 new_position.j = current_position.j;
 if (new_position.i >= 0 && new_position.i < num_rows && new_position.j >= 0 && new_position.j < num_cols && maze[new_position.i][new_position.j] == 'x') {
-    if (maze[new_position.i][new_position.j] == 's') {
+/*    if (maze[new_position.i][new_position.j] == 's') {
         return true;
     }
     valid_positions.push(new_position);
 }
-
+*/
 // Verificar direita
 new_position.i = current_position.i;
 new_position.j = current_position.j + 1;
@@ -105,6 +115,13 @@ if (new_position.i >= 0 && new_position.i < num_rows && new_position.j >= 0 && n
 }
 
     }
+//Verifica se a pilha de posições não está vazia
+if (!valid_positions.empty()){
+pos_t next_position = valid_positions.top();
+valid_positions.pop();
+return walk(next_position);
+
+}
 
     return false;
 }
@@ -113,9 +130,10 @@ if (new_position.i >= 0 && new_position.i < num_rows && new_position.j >= 0 && n
 int main() {
 
 
-    pos_t initial_pos = load_maze("../data/maze5.txt");   
+    pos_t initial_pos = load_maze("../data/maze4.txt");   
+    print_maze();
     bool exit_found = walk(initial_pos);
-
+    
     if (exit_found) {
         printf("Saída encontrada!\n");
     } else {
