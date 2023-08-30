@@ -61,9 +61,9 @@ bool walk(pos_t pos) {
         pos_t current_position = valid_positions.top();
         valid_positions.pop();
 
-    /*if (maze[pos.i][pos.j] == 's') {
+    if (maze[pos.i][pos.j] == 's') {
         return true;
-    }*/
+    }
 
         maze[current_position.i][current_position.j] = '.';
 
@@ -85,34 +85,38 @@ if (new_position.i >= 0 && new_position.i < num_rows && new_position.j >= 0 && n
 }
 
 // Verificar acima
-new_position.i = current_position.i - 1;
-new_position.j = current_position.j;
-if (new_position.i >= 0 && new_position.i < num_rows && new_position.j >= 0 && new_position.j < num_cols && maze[new_position.i][new_position.j] == 'x') {
-/*    if (maze[new_position.i][new_position.j] == 's') {
+pos_t new_position_above;
+new_position_above.i = current_position.i - 1;
+new_position_above.j = current_position.j;
+if (new_position_above.i >= 0 && new_position_above.i < num_rows && new_position_above.j >= 0 && new_position_above.j < num_cols && maze[new_position_above.i][new_position_above.j] == 'x') {
+    valid_positions.push(new_position_above);
+    if (maze[new_position_above.i][new_position_above.j] == 's') {
         return true;
     }
-    valid_positions.push(new_position);
 }
-*/
+
 // Verificar direita
-new_position.i = current_position.i;
-new_position.j = current_position.j + 1;
-if (new_position.i >= 0 && new_position.i < num_rows && new_position.j >= 0 && new_position.j < num_cols && maze[new_position.i][new_position.j] == 'x') {
-    if (maze[new_position.i][new_position.j] == 's') {
+pos_t new_position_right;
+new_position_right.i = current_position.i;
+new_position_right.j = current_position.j + 1;
+if (new_position_right.i >= 0 && new_position_right.i < num_rows && new_position_right.j >= 0 && new_position_right.j < num_cols && maze[new_position_right.i][new_position_right.j] == 'x') {
+    valid_positions.push(new_position_right);
+    if (maze[new_position_right.i][new_position_right.j] == 's') {
         return true;
     }
-    valid_positions.push(new_position);
 }
 
 // Verificar esquerda
-new_position.i = current_position.i;
-new_position.j = current_position.j - 1;
-if (new_position.i >= 0 && new_position.i < num_rows && new_position.j >= 0 && new_position.j < num_cols && maze[new_position.i][new_position.j] == 'x') {
-    if (maze[new_position.i][new_position.j] == 's') {
+pos_t new_position_left;
+new_position_left.i = current_position.i;
+new_position_left.j = current_position.j - 1;
+if (new_position_left.i >= 0 && new_position_left.i < num_rows && new_position_left.j >= 0 && new_position_left.j < num_cols && maze[new_position_left.i][new_position_left.j] == 'x') {
+    valid_positions.push(new_position_left);
+    if (maze[new_position_left.i][new_position_left.j] == 's') {
         return true;
     }
-    valid_positions.push(new_position);
 }
+
 
     }
 //Verifica se a pilha de posições não está vazia
@@ -129,8 +133,7 @@ return walk(next_position);
 
 int main() {
 
-
-    pos_t initial_pos = load_maze("../data/maze4.txt");   
+    pos_t initial_pos = load_maze("../data/maze.txt");   
     print_maze();
     bool exit_found = walk(initial_pos);
     
