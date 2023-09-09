@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stack>
-#include <cstdlib>  // Adicionado para usar a função system("clear")
+#include <cstdlib>
 #include <thread>
 #include <vector>
 #include <mutex>
@@ -57,6 +57,8 @@ void print_maze() {
 
 bool walk(pos_t pos) {
     valid_positions.push(pos);
+    std::vector<std::thread> threads;
+    std::vector<bool> thread_results;
 
     while (!valid_positions.empty()) {
         pos_t current_position = valid_positions.top();
@@ -71,14 +73,14 @@ bool walk(pos_t pos) {
         system("clear");
         print_maze();
 
-        std::vector<std::thread> threads_to_create;
+        std::vector<pos_t> new_positions_to_check;
 
         // Verificar abaixo
         pos_t new_position;
         new_position.i = current_position.i + 1;
         new_position.j = current_position.j;
         if (new_position.i >= 0 && new_position.i < num_rows && new_position.j >= 0 && new_position.j < num_cols && maze[new_position.i][new_position.j] != '#' && maze[new_position.i][new_position.j] != '.') {
-            threads_to_create.emplace_back(walk, new_position);
+            new_positions_to_check.push_back(new_position);
         }
 
         // Verificar acima
@@ -86,7 +88,10 @@ bool walk(pos_t pos) {
         new_position_acima.i = current_position.i - 1;
         new_position_acima.j = current_position.j;
         if (new_position_acima.i >= 0 && new_position_acima.i < num_rows && new_position_acima.j >= 0 && new_position_acima.j < num_cols && maze[new_position_acima.i][new_position_acima.j] != '#' && maze[new_position_acima.i][new_position_acima.j] != '.') {
-            threads_to_create.emplace_back(walk, new_position_acima);
+            new_positions_to_check.push_back(new_position_acima);
+             if (maze[new_position_acima.i][new_position_acima.j] == 's') {
+                 return true;
+            }
         }
 
         // Verificar direita
@@ -94,7 +99,10 @@ bool walk(pos_t pos) {
         new_position_direita.i = current_position.i;
         new_position_direita.j = current_position.j + 1;
         if (new_position_direita.i >= 0 && new_position_direita.i < num_rows && new_position_direita.j >= 0 && new_position_direita.j < num_cols && maze[new_position_direita.i][new_position_direita.j] != '#' && maze[new_position_direita.i][new_position_direita.j] != '.') {
-            threads_to_create.emplace_back(walk, new_position_direita);
+            new_positions_to_check.push_back(new_position_direita);
+             if (maze[new_position_direita.i][new_position_direita.j] == 's') {
+                 return true;
+            }
         }
 
         // Verificar esquerda
@@ -102,20 +110,30 @@ bool walk(pos_t pos) {
         new_position_esquerda.i = current_position.i;
         new_position_esquerda.j = current_position.j - 1;
         if (new_position_esquerda.i >= 0 && new_position_esquerda.i < num_rows && new_position_esquerda.j >= 0 && new_position_esquerda.j < num_cols && maze[new_position_esquerda.i][new_position_esquerda.j] != '#' && maze[new_position_esquerda.i][new_position_esquerda.j] != '.') {
-            threads_to_create.emplace_back(walk, new_position_esquerda);
+            new_positions_to_check.push_back(new_position_esquerda);
+             if (maze[new_position_esquerda.i][new_position_esquerda.j] == 's') {
+                 return true;
+            }
         }
 
         // Criar threads adicionais
-        stack_mutex.lock();
-        while (threads_to_create.size() > 1) {
-            threads_to_create.back().detach();
-            threads_to_create.pop_back();
+        for (const pos_t& new_pos : new_positions_to_check) {
+            threads.emplace_back([new_pos, &thread_results]() {
+                bool result = walk(new_pos);
+                thread_results.push_back(result);
+            });
         }
-        if (!threads_to_create.empty()) {
-            threads_to_create.back().swap(threads_to_create[0]);
-            threads_to_create.pop_back();
+    }
+
+     for (std::thread& thread : threads) {
+        thread.join(); // Espera que todas as threads terminem
+    }
+
+    // Verifique os resultados das threads
+    for (bool result : thread_results) {
+        if (result) {
+            return true;
         }
-        stack_mutex.unlock();
     }
 
     return false;
@@ -123,7 +141,7 @@ bool walk(pos_t pos) {
 
 int main() {
 
-    pos_t initial_pos = load_maze("../data/maze5.txt");   
+    pos_t initial_pos = load_maze("../data/maze6.txt");   
     print_maze();
     bool exit_found = walk(initial_pos);
     
